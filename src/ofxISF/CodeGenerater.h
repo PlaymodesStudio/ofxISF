@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Poco/RegularExpression.h"
+#include <regex>
 
 #include "Constants.h"
 #include "Uniforms.h"
@@ -226,19 +226,18 @@ protected:
 		{
 			string pattern = "(IMG_THIS_PIXEL|IMG_THIS_NORM_PIXEL)\\s*\\(\\s*(.*?)\\s*\\)";
 
-			Poco::RegularExpression re(pattern, Poco::RegularExpression::RE_NEWLINE_ANY);
-			Poco::RegularExpression::Match m;
-			m.offset = 0;
-
-			while (0 != re.match(isf_source, m.offset, m))
-			{
-				string found(isf_source, m.offset, m.length);
-
-				string lookup_name = found;
-				re.subst(lookup_name, "$1");
-
-				string image_name = found;
-				re.subst(image_name, "$2");
+            std::regex re(pattern);
+            std::smatch m;
+            int offset = 0;
+            while (std::regex_search(isf_source, m, re))
+            {
+                string found = m.str();
+                
+                string lookup_name = found;
+                lookup_name = std::regex_replace(lookup_name, re, "$1");
+                
+                string image_name = found;
+                image_name = std::regex_replace(image_name, re, "$2");
 
 				map<string, ImageDecl>::iterator it = image_decls.find(image_name);
 				if (it == image_decls.end())
@@ -263,56 +262,51 @@ protected:
 					throw "unknown error";
 				}
 
-				isf_source.replace(m.offset, m.length, replace_string);
-
-				m.offset += replace_string.size();
+				isf_source.replace(m.position(), m.length(), replace_string);
 			}
 		}
 
 		{
-			string pattern = "(IMG_PIXEL|IMG_NORM_PIXEL)\\s*\\(\\s*(.*?)\\s?,";
-
-			Poco::RegularExpression re(pattern, Poco::RegularExpression::RE_NEWLINE_ANY);
-			Poco::RegularExpression::Match m;
-			m.offset = 0;
-
-			while (0 != re.match(isf_source, m.offset, m))
-			{
-				string found(isf_source, m.offset, m.length);
-
-				string lookup_name = found;
-				re.subst(lookup_name, "$1");
-
-				string image_name = found;
-				re.subst(image_name, "$2");
-
-				map<string, ImageDecl>::iterator it = image_decls.find(image_name);
-				if (it == image_decls.end())
-				{
-					ofLogError("ofxISF::CodeGenerator") << "image name mismatch: " << image_name;
-					return false;
-				}
-
-				ImageDecl &image_decl = it->second;
-				string replace_string;
-
-				if (lookup_name == "IMG_PIXEL")
-				{
-					replace_string = image_decl.getImgPixlString();
-				}
-				else if (lookup_name == "IMG_NORM_PIXEL")
-				{
-					replace_string = image_decl.getImgNormPixelString();
-				}
-				else
-				{
-					throw "unknown error";
-				}
-
-				isf_source.replace(m.offset, m.length, replace_string);
-
-				m.offset += replace_string.size();
-			}
+            string pattern = "(IMG_PIXEL|IMG_NORM_PIXEL)\\s*\\(\\s*(.*?)\\s?,";
+            
+            std::regex re(pattern);
+            std::smatch m;
+            int offset = 0;
+            while (std::regex_search(isf_source/*.substr(offset, isf_source.size())*/, m, re))
+            {
+                string found = m.str();
+                
+                string lookup_name = found;
+                lookup_name = std::regex_replace(lookup_name, re, "$1");
+                
+                string image_name = found;
+                image_name = std::regex_replace(image_name, re, "$2");
+                
+                map<string, ImageDecl>::iterator it = image_decls.find(image_name);
+                if (it == image_decls.end())
+                {
+                    ofLogError("ofxISF::CodeGenerator") << "image name mismatch: " << image_name;
+                    return false;
+                }
+                
+                ImageDecl &image_decl = it->second;
+                string replace_string;
+                
+                if (lookup_name == "IMG_PIXEL")
+                {
+                    replace_string = image_decl.getImgPixlString();
+                }
+                else if (lookup_name == "IMG_NORM_PIXEL")
+                {
+                    replace_string = image_decl.getImgNormPixelString();
+                }
+                else
+                {
+                    throw "unknown error";
+                }
+                
+                isf_source.replace(m.position(), m.length(), replace_string);
+            }
 		}
 		
 		return true;
