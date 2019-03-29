@@ -20,7 +20,7 @@ public:
 
 	void setup(int w, int h, int internalformat = GL_RGB)
 	{
-		render_size.set(w, h);
+        render_size = glm::vec2(w, h);
 		this->internalformat = internalformat;
 		
 		ofFbo &fbo = framebuffer_map["DEFAULT"];
@@ -226,7 +226,7 @@ public:
 	
 protected:
 
-	ofVec2f render_size;
+    glm::vec2 render_size;
 	int internalformat;
 	
 	string name;
@@ -271,7 +271,7 @@ protected:
 		
 		shader.begin();
 		shader.setUniform1i("PASSINDEX", index);
-		shader.setUniform2fv("RENDERSIZE", render_size.getPtr());
+		shader.setUniform2fv("RENDERSIZE", &render_size.x);
 		shader.setUniform1f("TIME", ofGetElapsedTimef());
 		
 		ImageUniform::resetTextureUnitID();
@@ -571,7 +571,7 @@ protected:
 		}
 		else if (type == "point2D")
 		{
-			ofVec2f def;
+            glm::vec2 def;
 			
 			jsonxx::Array a = obj.get<jsonxx::Array>("DEFAULT", jsonxx::Array());
 			if (a.size() == 2)

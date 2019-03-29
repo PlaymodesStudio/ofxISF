@@ -230,15 +230,15 @@ protected:
 	}
 };
 
-class Point2DUniform : public Uniform_<ofVec2f>
+class Point2DUniform : public Uniform_<glm::vec2>
 {
 public:
 
-	Point2DUniform(const string& name, const ofVec2f& default_value = Type()) : Uniform_(name, default_value) {}
+	Point2DUniform(const string& name, const glm::vec2& default_value = Type()) : Uniform_(name, default_value) {}
 
 	void update(ofShader *shader)
 	{
-		shader->setUniform2fv(name, value.getPtr());
+		shader->setUniform2fv(name, &value.x);
 	}
 
 protected:
@@ -268,8 +268,8 @@ public:
 		string s = "_$NAME$_pct";
 		ofStringReplace(s, "$NAME$", getName());
 		
-		ofVec2f pct = value->getCoordFromPercent(1, 1);
-		shader->setUniform2fv(s, pct.getPtr());
+		glm::vec2 pct = value->getCoordFromPercent(1, 1);
+		shader->setUniform2fv(s, &pct.x);
 	}
 
 	bool isValid() const { return value != NULL; }

@@ -24,8 +24,8 @@ void ofApp::update(){
     }
     for (int i = 0; i < vec2fInputs.size(); i++) {
         string name = vec2fInputs[i].name;
-        ofVec2f value = vec2fInputs[i].value;
-        isf.setUniform<ofVec2f>(name, value);
+        glm::vec2 value = vec2fInputs[i].value;
+        isf.setUniform<glm::vec2>(name, value);
     }
     for (int i = 0; i < colorInputs.size(); i++) {
         string name = colorInputs[i].name;
@@ -56,11 +56,11 @@ void ofApp::setupGui(){
             param.name = name;
             gui.add(param.value.set(param.name, 0.5, 0, 1));
             floatInputs.push_back(param);
-        } else if (isf.getInputs().getUniform(i)->isTypeOf<ofVec2f>()){
-            type = "ofVec2f";
-            inputParameter<ofVec2f> param;
+        } else if (isf.getInputs().getUniform(i)->isTypeOf<glm::vec2>()){
+            type = "glm::vec2";
+            inputParameter<glm::vec2> param;
             param.name = name;
-            gui.add(param.value.set(param.name,ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5),ofVec2f(0,0),ofVec2f(ofGetWidth(),ofGetHeight())));
+            gui.add(param.value.set(param.name,glm::vec2(ofGetWidth()*.5,ofGetHeight()*.5),glm::vec2(0,0),glm::vec2(ofGetWidth(),ofGetHeight())));
             vec2fInputs.push_back(param);
         } else if (isf.getInputs().getUniform(i)->isTypeOf<ofFloatColor>()){
             type = "ofFloatColor";

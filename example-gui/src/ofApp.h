@@ -38,6 +38,6 @@ public:
     
     ofxPanel gui;
     vector<inputParameter<float>> floatInputs;
-    vector<inputParameter<ofVec2f>> vec2fInputs;
+    vector<inputParameter<glm::vec2>> vec2fInputs;
     vector<inputParameter<ofFloatColor>> colorInputs;
 };

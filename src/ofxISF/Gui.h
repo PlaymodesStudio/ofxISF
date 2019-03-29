@@ -54,13 +54,13 @@ public:
                 gr.parameters.add(param);
                 gr.types.push_back("float");
             }
-            else if (chain->getShader(j)->getInputs().getUniform(i)->isTypeOf<ofVec2f>())
+            else if (chain->getShader(j)->getInputs().getUniform(i)->isTypeOf<glm::vec2>())
             {
-                type = "ofVec2f";
-                ofParameter<ofVec2f> param;
-                param.set(name, ofVec2f(ofGetWidth()*.5,ofGetHeight()*.5), ofVec2f(0,0),ofVec2f(ofGetWidth(), ofGetHeight()));
+                type = "glm::vec2";
+                ofParameter<glm::vec2f> param;
+                param.set(name, glm::vec2(ofGetWidth()*.5,ofGetHeight()*.5), glm::vec2(0,0),glm::vec2(ofGetWidth(), ofGetHeight()));
                 gr.parameters.add(param);
-                gr.types.push_back("ofVec2f");
+                gr.types.push_back("glm::vec2");
             }
             else if (chain->getShader(j)->getInputs().getUniform(i)->isTypeOf<ofFloatColor>())
             {
@@ -101,9 +101,9 @@ public:
                     ofParameter<float> value = guiParams[j].parameters.getFloat(name);
                     chain->getShader(j)->setUniform<float>(name, value);
                 }
-                if (type == "ofVec2f") {
-                    ofParameter<ofVec2f> value = guiParams[j].parameters.getVec2f(name);
-                    chain->getShader(j)->setUniform<ofVec2f>(name, value);
+                if (type == "glm::vec2") {
+                    ofParameter<glm::vec2> value = guiParams[j].parameters.getVec2f(name);
+                    chain->getShader(j)->setUniform<glm::vec2>(name, value);
                 }
                 if (type == "ofFloatColor") {
                     ofVec4f col = guiParams[j].parameters.getVec4f(name);
